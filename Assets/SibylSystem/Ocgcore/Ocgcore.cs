@@ -1085,12 +1085,14 @@ public class Ocgcore : ServantWithCardDescription
             case GameMessage.SelectYesNo:
             case GameMessage.SelectOption:
             case GameMessage.SelectCard:
+            case GameMessage.SelectUnselectCard:
             case GameMessage.SelectPosition:
             case GameMessage.SelectTribute:
             case GameMessage.SortChain:
             case GameMessage.SelectCounter:
             case GameMessage.SelectSum:
             case GameMessage.SortCard:
+            case GameMessage.RockPaperScissors:
             case GameMessage.AnnounceRace:
             case GameMessage.AnnounceAttrib:
             case GameMessage.AnnounceCard:
@@ -2707,6 +2709,7 @@ public class Ocgcore : ServantWithCardDescription
     {
         int player = 0;
         int count = 0;
+        int count2 = 0;
         int code = 0;
         int min = 0;
         int max = 0;
@@ -3330,6 +3333,70 @@ public class Ocgcore : ServantWithCardDescription
                     gameInfo.addHashedButton("cancleSelected", -1, superButtonType.no, InterString.Get("取消选择@ui"));
                 }
                 realizeCardsForSelect();
+                if (ES_selectHint != "")
+                {
+                    gameField.setHint(ES_selectHint + " " + ES_min.ToString() + "-" + ES_max.ToString());
+                }
+                else
+                {
+                    gameField.setHint(InterString.Get("请选择卡片。") + " " + ES_min.ToString() + "-" + ES_max.ToString());
+                }
+                break;
+            case GameMessage.SelectUnselectCard:
+                if (inIgnoranceReplay() || inTheWorld())
+                {
+                    break;
+                }
+                if (condition == Condition.record)
+                {
+                    Sleep(60);
+                }
+                destroy(waitObject, 0, false, true);
+                player = localPlayer(r.ReadByte());
+                /*bool buttonok = */
+                r.ReadByte();
+                cancalable = (r.ReadByte() != 0);
+                ES_min = r.ReadByte();
+                ES_max = r.ReadByte();
+                ES_level = 0;
+                count = r.ReadByte();
+                for (int i = 0; i < count; i++)
+                {
+                    code = r.ReadInt32();
+                    gps = r.ReadGPS();
+                    card = GCS_cardGet(gps, false);
+                    if (card != null)
+                    {
+                        card.set_code(code);
+                        card.prefered = true;
+                        card.forSelect = true;
+                        card.selectPtr = i;
+                        allCardsInSelectMessage.Add(card);
+                    }
+                }
+                cardsSelected.Clear();
+                count2 = r.ReadByte();
+                for (int i = count; i < count + count2; i++)
+                {
+                    code = r.ReadInt32();
+                    gps = r.ReadGPS();
+                    card = GCS_cardGet(gps, false);
+                    if (card != null)
+                    {
+                        card.set_code(code);
+                        card.prefered = true;
+                        card.forSelect = true;
+                        card.selectPtr = i;
+                        cardsSelected.Add(card);
+                        allCardsInSelectMessage.Add(card);
+                    }
+                }
+                if (cancalable)
+                {
+                    gameInfo.addHashedButton("cancleSelected", -1, superButtonType.no, InterString.Get("取消选择@ui"));
+                }
+                realizeCardsForSelect();
+                cardsSelected.Clear();
                 if (ES_selectHint != "")
                 {
                     gameField.setHint(ES_selectHint + " " + ES_min.ToString() + "-" + ES_max.ToString());
@@ -4985,6 +5052,30 @@ public class Ocgcore : ServantWithCardDescription
                 }
                 Sleep(280);
                 break;
+            case GameMessage.RockPaperScissors:
+                if (inIgnoranceReplay() || inTheWorld())
+                {
+                    break;
+                }
+                if (condition == Condition.record)
+                {
+                    Sleep(60);
+                }
+                destroy(waitObject, 0, false, true);
+                player = localPlayer(r.ReadByte());
+                RMSshow_tp("RockPaperScissors"
+                    , new messageSystemValue { hint = "jiandao", value = "1" }
+                    , new messageSystemValue { hint = "shitou", value = "2" }
+                    , new messageSystemValue { hint = "bu", value = "3" });
+                break;
+            case GameMessage.HandResult:
+                int Result = r.ReadByte();
+                Program.I().new_ui_handShower.GetComponent<handShower>().me = (Result & 0x3) - 1;
+                Program.I().new_ui_handShower.GetComponent<handShower>().op = ((Result >> 2) & 0x3) - 1;
+                GameObject handres = create(Program.I().new_ui_handShower, Vector3.zero, Vector3.zero, false, Program.ui_main_2d);
+                destroy(handres, 10f);
+                Sleep(280);
+                break;
             case GameMessage.AnnounceRace:
                 if (inIgnoranceReplay() || inTheWorld())
                 {
@@ -5720,6 +5811,13 @@ public class Ocgcore : ServantWithCardDescription
                 cardsSelectable.Add(allCardsInSelectMessage[i]);
             }
         }
+        if (currentMessage == GameMessage.SelectUnselectCard)
+        {
+            for (int i = 0; i < allCardsInSelectMessage.Count; i++)
+            {
+                cardsSelectable.Add(allCardsInSelectMessage[i]);
+            }
+        }
         if (currentMessage == GameMessage.SelectTribute)
         {
             for (int i = 0; i < allCardsInSelectMessage.Count; i++)
@@ -6061,6 +6159,7 @@ public class Ocgcore : ServantWithCardDescription
         switch (currentMessage)
         {
             case GameMessage.SelectCard:
+            case GameMessage.SelectUnselectCard:
             case GameMessage.SelectTribute:
             case GameMessage.SelectSum:
                 m = new BinaryMaster();
@@ -8045,6 +8144,8 @@ public class Ocgcore : ServantWithCardDescription
                 break;
             case GameMessage.SelectCard:
                 break;
+            case GameMessage.SelectUnselectCard:
+                break;
             case GameMessage.SelectChain:
                 break;
             case GameMessage.SelectPlace:
@@ -8060,6 +8161,8 @@ public class Ocgcore : ServantWithCardDescription
             case GameMessage.SelectSum:
                 break;
             case GameMessage.SelectDisfield:
+                break;
+            case GameMessage.RockPaperScissors:
                 break;
             case GameMessage.AnnounceRace:
                 break;
@@ -8115,6 +8218,7 @@ public class Ocgcore : ServantWithCardDescription
             case GameMessage.SelectEffectYn:
             case GameMessage.SelectYesNo:
             case GameMessage.SelectCard:
+            case GameMessage.SelectUnselectCard:
             case GameMessage.SelectTribute:
             case GameMessage.SelectChain:
                 clearAllShowedB = true;
@@ -8133,6 +8237,8 @@ public class Ocgcore : ServantWithCardDescription
             case GameMessage.SelectSum:
                 break;
             case GameMessage.SelectDisfield:
+                break;
+            case GameMessage.RockPaperScissors:
                 break;
             case GameMessage.AnnounceRace:
                 break;
@@ -8333,6 +8439,16 @@ public class Ocgcore : ServantWithCardDescription
                     realizeCardsForSelect();
                 }
                 break;
+            case GameMessage.SelectUnselectCard:
+                if (card.forSelect)
+                {
+                    cardsSelected.Add(card);
+                    gameInfo.removeHashedButton("sendSelected");
+                    sendSelectedCards();
+                    realize();
+                    toNearest();
+                }
+                break;
             case GameMessage.SelectChain:
                 if (card.forSelect)
                 {
@@ -8417,6 +8533,8 @@ public class Ocgcore : ServantWithCardDescription
                 }
                 break;
             case GameMessage.SelectDisfield:
+                break;
+            case GameMessage.RockPaperScissors:
                 break;
             case GameMessage.AnnounceRace:
                 break;
@@ -8589,6 +8707,20 @@ public class Ocgcore : ServantWithCardDescription
                         {
                             ES_sortResult[i].card.show_number(i + 1, true);
                         }
+                    }
+                }
+                break;
+            case "RockPaperScissors":
+                {
+                    try
+                    {
+                        binaryMaster = new BinaryMaster();
+                        binaryMaster.writer.Write(Int32.Parse(result[0].value));
+                        sendReturn(binaryMaster.get());
+                    }
+                    catch (System.Exception e)
+                    {
+                        UnityEngine.Debug.Log(e);
                     }
                 }
                 break;
