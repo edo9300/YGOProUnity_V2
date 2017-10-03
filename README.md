@@ -10,6 +10,10 @@ The feedbacks is checked every day.
 
 ![pic](https://raw.githubusercontent.com/lllyasviel/YGOProUnity_V2/master/gitpic/0.jpg)
 
+**The pro2 AI is an lua AI reader with MR4. It can read all lua AI code.**
+
+**The AI seems buggy now because it is not the excellent Percy AI. We will make effort to improve it.**
+
 # How to compile the game?
 
 1. Download Unity 5.1.3 (https://unity3d.com/cn/get-unity/download/archive).
@@ -22,7 +26,7 @@ The feedbacks is checked every day.
 
 *In most case you do not need to care about the ocgcore wrapper.*
 
-1. Double click the **YGOProUnity_V2/AI_core_vs2017solution/Percy.sln**
+1. Double click the **YGOProUnity_V2/AI_core_vs2017solution/core.sln**
 
 2. build the c# solution in x64 and release mode and you get the **System.Servicemodel.Faltexception.dll**
 
@@ -34,7 +38,7 @@ The feedbacks is checked every day.
 
 *In most case you do not need to care about the ocgcore.dll.*
 
-1. Double click the **YGOProUnity_V2/AI_core_vs2017solution/Percy.sln**
+1. Double click the **YGOProUnity_V2/AI_core_vs2017solution/core.sln**
 
 2. build the c++ solution in x64 and release mode and you get the **ocgcore.dll**
 
