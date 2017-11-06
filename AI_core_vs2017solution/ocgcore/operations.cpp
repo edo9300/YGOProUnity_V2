@@ -1040,7 +1040,7 @@ int32 field::swap_control(uint16 step, effect* reason_effect, uint8 reason_playe
 		pduel->write_buffer8(HINT_SELECTMSG);
 		pduel->write_buffer8(p1);
 		pduel->write_buffer32(pcard2->data.code);
-		add_process(PROCESSOR_SELECT_PLACE, 0, 0, 0, p1, flag, 1);
+		add_process(PROCESSOR_SELECT_PLACE, 0, 0, (group*)pcard1, p1, flag, 1);
 		return FALSE;
 	}
 	case 2: {
@@ -1056,7 +1056,7 @@ int32 field::swap_control(uint16 step, effect* reason_effect, uint8 reason_playe
 		pduel->write_buffer8(HINT_SELECTMSG);
 		pduel->write_buffer8(p2);
 		pduel->write_buffer32(pcard1->data.code);
-		add_process(PROCESSOR_SELECT_PLACE, 0, 0, 0, p2, flag, 1);
+		add_process(PROCESSOR_SELECT_PLACE, 0, 0, (group*)pcard2, p2, flag, 1);
 		return FALSE;
 	}
 	case 3: {
@@ -3761,7 +3761,7 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 		pduel->write_buffer8(HINT_SELECTMSG);
 		pduel->write_buffer8(pcard->current.controler);
 		pduel->write_buffer32(pcard->data.code);
-		add_process(PROCESSOR_SELECT_PLACE, 0, 0, 0, pcard->current.controler, flag, 1);
+		add_process(PROCESSOR_SELECT_PLACE, 0, 0, (group*)pcard, pcard->current.controler, flag, 1);
 		return FALSE;
 	}
 	case 8: {
@@ -4104,7 +4104,7 @@ int32 field::move_to_field(uint16 step, card* target, uint32 enable, uint32 ret,
 			pduel->write_buffer8(HINT_SELECTMSG);
 			pduel->write_buffer8(move_player);
 			pduel->write_buffer32(target->data.code);
-			add_process(PROCESSOR_SELECT_PLACE, 0, 0, 0, move_player, flag, 1);
+			add_process(PROCESSOR_SELECT_PLACE, 0, 0, (group*)target, move_player, flag, 1);
 		} else {
 			uint32 flag;
 			uint32 lreason = (target->current.location == LOCATION_MZONE) ? LOCATION_REASON_CONTROL : LOCATION_REASON_TOFIELD;
@@ -4132,7 +4132,7 @@ int32 field::move_to_field(uint16 step, card* target, uint32 enable, uint32 ret,
 			pduel->write_buffer8(HINT_SELECTMSG);
 			pduel->write_buffer8(move_player);
 			pduel->write_buffer32(target->data.code);
-			add_process(PROCESSOR_SELECT_PLACE, 0, 0, 0, move_player, flag, 1);
+			add_process(PROCESSOR_SELECT_PLACE, 0, 0, (group*)target, move_player, flag, 1);
 		}
 		return FALSE;
 	}
