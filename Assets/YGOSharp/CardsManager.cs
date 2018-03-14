@@ -19,19 +19,20 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "欢迎使用 YGOPro2 1033.D.3";
-            nullString += "\r\n\r\n";
-            nullString += "使用本软件竞技前请在官方网站阅读竞技声明。";
+			nullString += "Welcome YGOPro 2";
+            //nullString += "\r\n\r\n";
+            //nullString += "License";
             //if (File.Exists("config/link.conf"))
             //{
-            nullString += "\r\n";
-            nullString += "[url=http://ygopro2.lofter.com/lisence][u]http://ygopro2.lofter.com/lisence[/u][/url]";
-            nullString += "\r\n\r\n";
-            nullString += "官方网站：\r\n[url=http://ygopro2.lofter.com][u]http://ygopro2.lofter.com[/u][/url]\r\n请随时关注此页面的新卡消息和程序更新消息。";
+            //nullString += "\r\n";
+            //nullString += "[url=http://ygopro2.lofter.com/lisence][u]http://ygopro2.lofter.com/lisence[/u][/url]";
+            //nullString += "\r\n\r\n";
+			//nullString += "Official website：\r\n[url=http://ygopro2.lofter.com][u]http://ygopro2.lofter.com[/u][/url]\r\n";
             //}
-            nullString += "\r\n\r\n";
-            nullString += "公测玩家交流群：\r\n[url=https://jq.qq.com/?_wv=1027&k=42Gsxgd][u]580454979[/u][/url]";
-            nullString += "\r\n[url=https://jq.qq.com/?_wv=1027&k=44aGRzz][u]428563714[/u][/url]";
+            nullString += "\r\n";
+			nullString += "Credits：\r\n * Froge / Iliyasviel (Developer) \r\n * KhrisKH (Compiled, Translated, Spanish) \r\n * AntiMetaman (pics, textures, closeup, translated) \r\n * edo9300 (ygocore) \r\n * Mercury233 (server) \r\n * Gideon (server) \r\n * Eerie Code, MLD, andre, Shad3, Cybercatman, GameMaster, TOP, Lyris, Senpaizuri, AlphaKretin, Steelren, and all other scripters (Scripting) \r\n * Ace, Lord of Nightmares, Tea82, deisuke, Procyon, Juan-K (artwork)";
+            nullString += " ";
+			nullString = "";
             using (SqliteConnection connection = new SqliteConnection("Data Source=" + databaseFullPath))
             {
                 connection.Open();
