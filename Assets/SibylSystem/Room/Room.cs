@@ -355,7 +355,7 @@ public class Room : WindowServantSP
     public void StocMessage_JoinGame(BinaryReader r)
     {
         lflist = r.ReadUInt32();
-        rule = r.ReadByte(); //Weather is a tcg(0), ocg(1) or mixed(2).
+        rule = r.ReadByte(); //Weather is a tcg(0), ocg(1).
         mode = r.ReadByte(); //Weather is an ai(0), single(1) or tag duel(2).
         Program.I().ocgcore.MasterRule = r.ReadChar();
         no_check_deck = r.ReadBoolean();
@@ -368,7 +368,8 @@ public class Room : WindowServantSP
         draw_count = r.ReadByte();
         time_limit = r.ReadInt16();
         Debug.Log("Rule " + rule);
-        Program.I().ocgcore.lua64 = (rule == 2);
+        byte check = r.ReadByte(); //If this byte is set to 2 and it's not a random value, that means it's should use lua64
+        Program.I().ocgcore.lua64 = (check == 2);
         ini();
         Program.I().shiftToServant(Program.I().room);
     }
@@ -624,7 +625,7 @@ public class Room : WindowServantSP
     lazyPlayer[] realPlayers = new lazyPlayer[4];
 
     public UInt32 lflist;
-    public byte rule;  //0: TCG //1:OCG //2:Mixed 
+    public byte rule;  //0: TCG //1:OCG 
     public byte mode; //0: Single //1: Competitive Duel //2:Tag Duel
     public bool lua64; //Wether to use Uint64 or not in the room.
     public bool no_check_deck;
