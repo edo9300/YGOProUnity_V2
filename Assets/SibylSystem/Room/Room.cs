@@ -355,8 +355,8 @@ public class Room : WindowServantSP
     public void StocMessage_JoinGame(BinaryReader r)
     {
         lflist = r.ReadUInt32();
-        rule = r.ReadByte();
-        mode = r.ReadByte();
+        rule = r.ReadByte(); //Weather is a tcg(0), ocg(1).
+        mode = r.ReadByte(); //Weather is an ai(0), single(1) or tag duel(2).
         Program.I().ocgcore.MasterRule = r.ReadChar();
         no_check_deck = r.ReadBoolean();
         no_shuffle_deck = r.ReadBoolean();
@@ -367,6 +367,9 @@ public class Room : WindowServantSP
         start_hand = r.ReadByte();
         draw_count = r.ReadByte();
         time_limit = r.ReadInt16();
+        Debug.Log("Rule " + rule);
+        byte check = r.ReadByte(); //If this byte is set to 2 and it's not a random value, that means it's should use lua64
+        Program.I().ocgcore.lua64 = (check == 2);
         ini();
         Program.I().shiftToServant(Program.I().room);
     }
@@ -622,8 +625,9 @@ public class Room : WindowServantSP
     lazyPlayer[] realPlayers = new lazyPlayer[4];
 
     public UInt32 lflist;
-    public byte rule;
-    public byte mode;
+    public byte rule;  //0: TCG //1:OCG 
+    public byte mode; //0: Single //1: Competitive Duel //2:Tag Duel
+    public bool lua64; //Wether to use Uint64 or not in the room.
     public bool no_check_deck;
     public bool no_shuffle_deck;
     public int start_lp = 8000;
@@ -640,44 +644,44 @@ public class Room : WindowServantSP
         string description = "";
         if (mode == 0)
         {
-            description += InterString.Get("单局模式");
+            description += InterString.Get("单局模式"); //Single (ai)
         }
         if (mode == 1)
         {
-            description += InterString.Get("比赛模式");
+            description += InterString.Get("比赛模式"); //Duel (pvp)
         }
         if (mode == 2)
         {
-            description += InterString.Get("双打模式");
+            description += InterString.Get("双打模式"); //Tag duel (2v2)
         }
         if (Program.I().ocgcore.MasterRule == 4)
         {
-            description += InterString.Get("/新大师规则") + "\r\n";
+            description += InterString.Get("/新大师规则") + "\r\n"; //Master rule 4
         }
         else
         {
-            description += InterString.Get("/大师规则[?]", Program.I().ocgcore.MasterRule.ToString()) + "\r\n";
+            description += InterString.Get("/大师规则[?]", Program.I().ocgcore.MasterRule.ToString()) + "\r\n"; //Other master rules
         }
         description += InterString.Get("禁限卡表:[?]", YGOSharp.BanlistManager.GetName(lflist)) + "\r\n";
         if (rule == 0)
         {
-            description += InterString.Get("(OCG卡池)") + "\r\n";
+            description += InterString.Get("(OCG卡池)") + "\r\n"; //OCG Banlist
         }
         if (rule == 1)
         {
-            description += InterString.Get("(TCG卡池)") + "\r\n";
+            description += InterString.Get("(TCG卡池)") + "\r\n"; //TCG Banlist
         }
         if (rule == 2)
         {
-            description += InterString.Get("(混合卡池)") + "\r\n";
+            description += InterString.Get("(混合卡池)") + "\r\n"; // Mixed banlist
         }
         if (no_check_deck)
         {
-            description += InterString.Get("*不检查卡组") + "\r\n";
+            description += InterString.Get("*不检查卡组") + "\r\n"; //No deck check
         }
         if (no_shuffle_deck)
         {
-            description += InterString.Get("*不洗牌") + "\r\n";
+            description += InterString.Get("*不洗牌") + "\r\n"; // No shuffling
         }
         description += InterString.Get("LP:[?]", start_lp.ToString()) + " ";
         description += InterString.Get("手牌:[?]", start_hand.ToString()) + " \r\n";
